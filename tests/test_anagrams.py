@@ -4,7 +4,7 @@ sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
 from unittest import TestCase, main
 from time import time
-from src.kata_anagrams_weabreu.anagrams import search_anagrams, search_anagrams_advanced
+from src.kata_anagrams_weabreu.anagrams import search_anagrams, search_anagrams_advanced, AnagramsAnalyzer
 
 input_data = [
     "crepitus", "piecrust", "spate", "tapes", "tepas", "punctilio", 
@@ -137,6 +137,87 @@ class TestSearchAnagramsAdvanced(TestCase):
     def test_should_return_type_exception_if_receive_dict(self):
         with self.assertRaises(TypeError) as context:
             search_anagrams({ "a": "b" })
+
+class TestAnagramsAnalyzer(TestCase):
+    def setUp(self) -> None:
+        return super().setUp()
+
+    def test_load_word_does_not_throw_error(self):
+        analyzer = AnagramsAnalyzer()
+        analyzer.load_word( input_data[0] )
+
+    def test_load_word_throw_type_error_if_receive_int(self):
+        analyzer = AnagramsAnalyzer()
+        with self.assertRaises(TypeError) as context:
+            analyzer.load_word( 1 )
+
+    def test_get_anagrams_return_empty_list_if_does_not_load_word(self):
+        analyzer = AnagramsAnalyzer()
+        self.assertEqual( analyzer.get_anagrams(), [] )
+
+    def test_get_anagrams_return_expected_data_if_load_every_word_on_input_data(self):
+        analyzer = AnagramsAnalyzer()
+        
+        for word in input_data:
+            analyzer.load_word( word )
+        
+        self.assertEqual( analyzer.get_anagrams(), expected_data )
+    
+    def test_get_anagrams_words_count_return_0_if_does_not_load_word(self):
+        analyzer = AnagramsAnalyzer()
+        self.assertEqual( analyzer.get_anagrams_words_count(), 0 )
+
+    def test_get_anagrams_words_count_return_15_if_load_every_word_on_input_data(self):
+        analyzer = AnagramsAnalyzer()
+
+        for word in input_data:
+            analyzer.load_word( word )
+
+        self.assertEqual( analyzer.get_anagrams_words_count(), 15 )
+
+    def test_get_longest_word_set_should_return_empty_if_does_not_load_word(self):
+        analyzer = AnagramsAnalyzer()
+        self.assertEqual( analyzer.get_longest_word_set(), "" )
+
+    def test_get_longest_word_set_should_return_longest_word_if_load_every_word_on_input_data(self):
+        analyzer = AnagramsAnalyzer()
+
+        for word in input_data:
+            analyzer.load_word( word )
+
+        self.assertEqual( analyzer.get_longest_word_set(), "punctilio unpolitic" )
+
+    def test_get_most_words_set_should_return_empty_if_does_not_load_word(self):
+        analyzer = AnagramsAnalyzer()
+        self.assertEqual( analyzer.get_most_words_set(), "" )
+
+    def test_get_most_words_set_should_return_most_words_set_if_load_every_word_on_input_data(self):
+        analyzer = AnagramsAnalyzer()
+
+        for word in input_data:
+            analyzer.load_word( word )
+
+        self.assertEqual( analyzer.get_most_words_set(), "spate tapes tepas paste pates peats septa" )
+
+    def test_get_set_count_should_return_0_if_does_not_load_word(self):
+        analyzer = AnagramsAnalyzer()
+        self.assertEqual( analyzer.get_set_count(), 0 )
+
+    def test_get_set_count_should_return_4_if_load_every_word_on_input_data(self):
+        analyzer = AnagramsAnalyzer()
+
+        for word in input_data:
+            analyzer.load_word( word )
+
+        self.assertEqual( analyzer.get_set_count(), 4 )
+
+    def test_get_set_count_should_return_0_if_not_anagrams_words_loaded(self):
+        analyzer = AnagramsAnalyzer()
+
+        analyzer.load_word("sort")
+        analyzer.load_word("word")
+
+        self.assertEqual( analyzer.get_set_count(), 0 )
 
 if __name__ == "__main__":
     main()
